@@ -10,6 +10,14 @@ struct value
 	vtype v;
 };
 
+value tvalue(_type type,vtype v)
+{
+	value r;
+	r.type = type;
+	r.v = v;
+	return r;
+}
+
 
 const unsigned data_vmax = 256;
 class data
@@ -33,6 +41,17 @@ class data
 				this->vlist[n].type = 0;
 				this->vlist[n].v = 0;
 			}
+		}
+		
+		data(data *dest) : type(0),vmax(data_vmax),vnum(0)
+		{
+			this->vlist = new value[this->vmax];
+			for(int n=0;n<this->vmax;n++)
+			{
+				this->vlist[n].type = 0;
+				this->vlist[n].v = 0;
+			}
+			this->copy(dest);
 		}
 		
 		~data()
@@ -62,6 +81,28 @@ class data
 			}
 			
 			this->vlist[this->vnum++] = *v;
+		}
+		
+		unsigned add(value *v,unsigned vsize)
+		{
+			if(v == NULL || vsize == 0)
+			{
+				return 0;
+			}
+			
+			unsigned r= 0;
+			for(unsigned n=0;n<vsize;n++)
+			{
+				if(this->add(&v[n]))
+				{
+					r++;
+				}
+				else
+				{
+					return r;
+				}
+			}
+			return r;
 		}
 		
 		bool deletefirst(_type desttype)
@@ -140,7 +181,52 @@ class data
 			return false;
 		}
 		
+		bool setfirst(value *dest)
+		{
+			if(dest == NULL)
+			{
+				return false;
+			}
+			
+			return this->setfirst(dest->type,dest->v);
+		}
 		
+		bool exist(_type desttype)
+		{
+			if(desttype == 0)
+			{
+				return false;
+			}
+			
+			for(unsigned n=0;n<this->vnum;n++)
+			{
+				if(this->vlist[n].type == desttype)
+				{
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		unsigned count(_type desttype)
+		{
+			if(desttype == 0)
+			{
+				return 0;
+			}
+			
+			unsigned r = 0;
+			for(unsigned n=0;n<this->vnum;n++)
+			{
+				if(this->vlist[n].type == desttype)
+				{
+					r++;
+				}
+			}
+			
+			return r;
+		}
 		
 		bool copy(data *dest)
 		{
@@ -161,7 +247,7 @@ class data
 			
 			return true;
 		}
-		
+
 	private :
 		
 		void sort()

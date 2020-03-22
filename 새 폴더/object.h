@@ -98,7 +98,31 @@ class object
 			return NULL;
 		}
 		
+		data *getdbyindex(unsigned index)
+		{
+			if(index >= this->dnum)
+			{
+				return NULL;
+			}
+			return &this->dlist[index];
+		}
 		
+		bool copy(object* dest)
+		{
+			if(dest == NULL)
+			{
+				return false;
+			}
+			
+			this->type = dest->type;
+			this->dnum = dest->dnum;
+			for(unsigned n=0;n<this->dnum;n++)
+			{
+				this->dlist[n].copy(dest->getdbyindex(n));
+			}
+			
+			return true;
+		}
 		
 		
 	private :	
