@@ -1,10 +1,15 @@
+#pragma once
+typedef unsigned _type;
+typedef double vtype;
+
+
 const unsigned tnamelen = 32;
 
 namespace mtypelist
 {
 	enum v
 	{
-		_x=1,_y,__type,
+		_x=1,_y,__type,_movetype,_speed,_size,_direction,_destination,_destx,_desty,
 		
 		
 		_enter,_plus,_minus,_multiple,_divide,_add,_delete,
@@ -18,7 +23,7 @@ namespace mtypelist
 	
 	char name[typelast-1][tnamelen] =
 	{
-		"x","y","type",
+		"x","y","type","movetype","speed","size","direction","destination","destx","desty",
 		
 		
 		"enter","plus","minus","multiple","divide","add","delete",
@@ -33,15 +38,15 @@ namespace dtypelist
 {
 	enum v
 	{
-		_posdata=1
+		_pdata=1,_status,
 		
 		
-		,typelast
+		typelast
 	};
 	
 	char name[typelast-1][tnamelen] = 
 	{
-		"positiondata"
+		"positiondata","status"
 	};
 	
 };

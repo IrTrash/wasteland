@@ -1,4 +1,6 @@
 #pragma once
+#include "math.h"
+#define pi 3.141592
 
 const unsigned _clock = 10;
 const unsigned _fps = 60;
@@ -173,114 +175,20 @@ class world
 				return 0;
 			}
 			
-			using namespace mtypelist;
-			
-			
-			data *d = this->dlist[destindex];
-			if(d == NULL)
+			data *dbuf = this->dlist[destindex];
+			if(dbuf == NULL)
 			{
 				return 0;
 			}
-			unsigned r = 0;
-			switch(opertype)
-			{
-				case _enter :
-				{
-					for(unsigned n=0;n<valuesize;n++)
-					{
-						if(d->setfirst(&destvalue[n]))
-						{
-							r++;
-						}
-						
-					}
-				}
-				break;
-				
-				case _plus :
-				{
-					vtype v;
-					for(unsigned n=0;n<valuesize;n++)
-					{
-						if(d->exist(destvalue[n].type))
-						{
-							d->setfirst(destvalue[n].type,d->getvfirst(destvalue[n].type) + destvalue[n].v);
-							r++;
-						}
-						
-					}
-				}
-				break;
-				
-				case _minus :
-				{
-					vtype v;
-					for(unsigned n=0;n<valuesize;n++)
-					{
-						if(d->exist(destvalue[n].type))
-						{
-							d->setfirst(destvalue[n].type,d->getvfirst(destvalue[n].type) - destvalue[n].v);
-							r++;
-						}
-						
-					}
-				}
-				break;
-				
-				case _multiple :
-				{
-					vtype v;
-					for(unsigned n=0;n<valuesize;n++)
-					{
-						if(d->exist(destvalue[n].type))
-						{
-							d->setfirst(destvalue[n].type,d->getvfirst(destvalue[n].type) * destvalue[n].v);
-							r++;
-						}
-						
-					}
-				}
-				break;
-				
-				case _divide :
-				{
-					vtype v;
-					for(unsigned n=0;n<valuesize;n++)
-					{
-						if(d->exist(destvalue[n].type) && destvalue[n].v != 0)
-						{
-							d->setfirst(destvalue[n].type,d->getvfirst(destvalue[n].type) / destvalue[n].v);
-							r++;
-						}
-						
-					}
-				}
-				break;
-				
-				case _add :
-				{
-					return d->add(destvalue,valuesize);
-				}
-				break;
-				
-				case _delete :
-				{
-					for(unsigned n=0;n<valuesize;n++)
-					{
-						if(destvalue[n].type == __type)
-						{
-							d->deletefirst((_type)destvalue[n].v);
-							r++;
-						}
-					}
-				}
-				break;
-				
-				
-				default :
-					return 0;
-			}
 			
+			unsigned r = 0;
+			for(unsigned n=0;n<valuesize;n++)
+			{
+				if(dbuf->operfirst(opertype,destvalue+n))
+				{
+					r++;
+				}
+			}
 			return r;
 		}
 		
@@ -289,9 +197,20 @@ class world
 			
 		}
 		
-		unsigned setobjdata(_type opertype, unsigned objindex, data *destdata, unsigned destsize)
+		unsigned setobjdata(_type opertype, unsigned objindex, data *destdata)
 		{
+			if(objindex >= this->onum || destdata == NULL )
+			{
+				return 0;
+			}
 			
+			object *buf = this->objlist[objindex];
+			if(buf == NULL)
+			{
+				return 0;
+			}
+
+			return buf->setdata(opertype,destdata);
 		}
 		
 		
@@ -315,6 +234,7 @@ class world
 		
 		
 		paintplan pp;
+		unsigned gridsize,width,height,gwidth,gheight;
 	private :	
 		data **dlist;
 		unsigned dmax,dnum,dindex;
@@ -331,6 +251,8 @@ class world
 			this->dproc();
 			this->oproc();
 			
+			
+			
 			this->pproc();
 		}
 		
@@ -343,11 +265,176 @@ class world
 		
 		void oproc() //object
 		{
+			using namespace mtypelist;
+			using namespace dtypelist;
+			using namespace otypelist;
 			
+			object *buf = NULL;
+			data *stat = NULL, *pdata=NULL;;
+			for(unsigned n=0;n<this->onum;n++)
+			{
+				if(this->objlist[n] == NULL)
+				{
+					continue;
+				}
+				
+				buf = this->objlist[n];
+				
+				switch(buf->type)
+				{
+					case _bullet :
+					{
+						stat = buf->getdfirst(_status);
+						pdata = buf->getdfirst(_pdata);
+						if(stat != NULL)
+						{
+							
+						}
+						
+						
+						if(pdata != NULL)
+						{
+							_type movetype = (_type)pdata->getvfirst(_movetype);
+							int x = pdata->getvfirst(_x), y = pdata->getvfirst(_y);
+							switch(movetype)
+							{
+								case _destination :
+								{								
+									int dx = pdata->getvfirst(_destx),dy = pdata->getvfirst(_desty);
+
+									if(dx != x)
+									{
+										pdata->setfirst(_direction,atan((dy-y)/(dx-x) ));
+									}
+									else
+									{
+										if(dy > y)
+										{
+											pdata->setfirst(_direction,0);
+										}
+										else if(dy < y)
+										{
+											pdata->setfirst(_direction,pi/2);
+										}
+									}
+									pdata->setfirst(_movetype,_direction);
+								} //이어지기 
+								case _direction :
+								{	
+									double speed = pdata->getvfirst(_speed);
+									if(speed == 0)
+									{
+										break;
+									}		
+									double direction = pdata->getvfirst(_direction);
+									
+									pdata->setfirst(_x , x + (speed*cos(direction)) );
+									pdata->setfirst(_y , y + (speed*sin(direction)) );
+								}
+								break;
+							}
+							
+							
+						}
+						
+						
+						
+					}
+					break;
+					
+					case _unit :
+					{
+						stat = buf->getdfirst(_status);
+						pdata = buf->getdfirst(_pdata);
+					}
+					break;
+				}
+			}
 		}
 		
 		void pproc() //paint
 		{
+			pp.fnum = 0;
 			
+			using namespace mtypelist;
+			using namespace dtypelist;
+			using namespace otypelist;
+			
+			for(unsigned n=0;n<this->onum;n++)
+			{
+				if(this->objlist[n] == NULL)
+				{
+					continue;
+				}
+				data *dbuf = objlist[n]->getdfirst(_pdata);
+				if(dbuf == NULL)
+				{
+					continue;
+				}
+				
+				switch(objlist[n]->type)
+				{
+					case _bullet :
+					{		
+						pp.addfigure(_circle,dbuf->getvfirst(_x),dbuf->getvfirst(_y),dbuf->getvfirst(_size),RGB(0,0,0));
+					}
+					break;
+					
+					case _unit :
+					break;
+				}
+			}
+		}
+		
+		
+		
+		public :
+		
+		bool iniobj(_type desttype, object *dest)
+		{
+			if(dest == NULL)
+			{
+				return false;
+			}
+			
+			
+			data dbuf;
+			dest->type = desttype;
+			dest->dnum = 0;
+			
+			using namespace mtypelist;
+			using namespace dtypelist;
+			using namespace otypelist;
+			switch(desttype)
+			{
+				case _bullet :
+				{
+					dbuf.type = _pdata;
+					dbuf.add(_x,0);
+					dbuf.add(_y,0);
+					dbuf.add(_destx,0);
+					dbuf.add(_desty,0);
+					dbuf.add(_size,1);
+					dbuf.add(_speed,1);
+					dbuf.add(_movetype,0);
+					dbuf.add(_direction,0);
+					dest->adddata(&dbuf);
+					
+				}
+				break;
+				
+				case _unit:
+				break;
+				
+				default : return false;
+			}
+			
+			return true;
+		}
+		
+		
+		void paint(HDC dc)
+		{
+			this->pp.paint(dc);
 		}
 };

@@ -4,9 +4,8 @@
 #include <time.h>
 
 
-
-#include "data.h"
 #include "type.h"
+#include "data.h"
 #include "paint.h"
 #include "object.h"
 #include "world.h"
@@ -25,13 +24,14 @@ namespace test1
 	{
 		using namespace mtypelist;
 		using namespace dtypelist;
+		using namespace otypelist;
 		
 		value vbuf;
 		
 		vbuf.type = _x;
 		vbuf.v = 320;
 		
-		d.type = _posdata;
+		d.type = _pdata;
 		d.add(&vbuf);
 		d.add(_y,190);
 		
@@ -44,6 +44,30 @@ namespace test1
 		
 		w.adddata(&d);
 		w.setdata_first(_enter,0,inputvalue,1);
+		
+		
+		//obj test
+		w.iniobj(_bullet,&o);
+		
+		ivnum = 0;
+		inputvalue[ivnum].type = _x;
+		inputvalue[ivnum++].v = 300;
+		inputvalue[ivnum].type = _y;
+		inputvalue[ivnum++].v = 200;
+		inputvalue[ivnum].type = _destx;
+		inputvalue[ivnum++].v = 800;
+		inputvalue[ivnum].type = _desty;
+		inputvalue[ivnum++].v = 700;
+		inputvalue[ivnum].type = _movetype;
+		inputvalue[ivnum++].v = _destination;
+		inputvalue[ivnum].type = _speed;
+		inputvalue[ivnum++].v = 10;
+		inputvalue[ivnum].type = _size;
+		inputvalue[ivnum++].v = 11;
+		
+		o.setdata(_enter,_pdata,inputvalue,ivnum);
+		w.addobj(&o);
+		
 		
 	}
 		
@@ -59,13 +83,21 @@ namespace test1
 		
 		using namespace mtypelist;
 		using namespace dtypelist;
-		data *dbuf = w.getdatapfirst(_posdata);
+		data *dbuf = w.getdatapfirst(_pdata);
 		sprintf(str,"%d",(int)dbuf->getvfirst(_x));
 		TextOutA(dc,0,30,str,strlen(str));
 		
 		
 		figure f(_circle,400,200,20,RGB(210,80,255));
 		f.paint(dc);
+		
+		
+		w.paint(dc);
+	}
+	
+	void testproc()
+	{
+		w.proc();
 	}
 };
 
@@ -78,6 +110,10 @@ void testpaint(HDC dc)
 	test1::paint(dc);
 }
 
+void testproc()
+{
+	test1::testproc();
+}
 
 RECT crt; // crt
 HDC hdc,hMemDC;
@@ -87,7 +123,7 @@ HBITMAP hBitmap, OldBitmap;
 HPEN hPen,OldPen;
 
 
-int ccount;
+
 
 
 
@@ -99,7 +135,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			{
 				srand(unsigned(time(NULL)));
 				GetClientRect(hwnd,&crt);
-				ccount = 0;
+
+				SetTimer(hwnd,0,40,NULL);
 				
 				test1::start();
 			}
@@ -109,12 +146,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			switch(wParam)
 			{
 				case 0 :
-					if(ccount = 3)
-					{
-						InvalidateRect(hwnd,&crt,false); 
-						ccount = 0;
-					}
-					ccount++;
+					InvalidateRect(hwnd,&crt,false); 
+					testproc();
+					
 				break;
 				
 			}			
@@ -127,6 +161,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			hMemDC = CreateCompatibleDC(hdc);
 			hBitmap = CreateCompatibleBitmap(hdc, crt.right, crt.bottom);
 			OldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap); //HBITMAP(SelectObject(hMemDC, hBitmap)); 이것도 됨.
+			
+			BGBrush = CreateSolidBrush(RGB(40,255,40));
+			
+			FillRect(hMemDC,&crt,BGBrush);
+			DeleteObject(BGBrush);
 			
 			//출력할거
 			testpaint(hMemDC);

@@ -1,7 +1,5 @@
 #pragma once
 
-typedef unsigned _type;
-typedef double vtype;
 
 
 struct value
@@ -189,6 +187,85 @@ class data
 			}
 			
 			return this->setfirst(dest->type,dest->v);
+		}
+		
+		bool operfirst(_type opertype, _type desttype, vtype destv)
+		{
+			if(desttype == 0)
+			{
+				return false;
+			}
+			
+			
+			value *vbuf = this->getfirst(desttype);
+			if(vbuf == NULL)
+			{
+				return false;
+			}
+			
+			using namespace mtypelist;
+			switch(opertype)
+			{
+				case _enter :
+				{
+					vbuf->v = destv;
+				}
+				break;
+				
+				case _plus :
+				{
+					vbuf->v += destv;
+				}
+				break;
+				
+				case _minus :
+				{
+					vbuf->v -= destv;
+				}
+				break;
+				
+				case _multiple :
+				{
+					vbuf->v *= destv;
+				}
+				break;
+				
+				case _divide :
+				{
+					if(destv == 0)
+					{
+						return false;
+					}
+					vbuf->v /= destv;
+				}
+				break;
+				
+				case _add :
+				{
+					return this->add(desttype,destv);
+				}
+				break;
+				
+				case _delete :
+				{
+					return this->deletefirst(desttype);
+				}
+				break;
+				
+				default : return false;
+			}
+			
+			return true;
+		}
+		
+		bool operfirst(_type opertype,value *dest)
+		{
+			if(dest == NULL)
+			{
+				return false;
+			}
+			
+			return this->operfirst(opertype,dest->type,dest->v);
 		}
 		
 		bool exist(_type desttype)
