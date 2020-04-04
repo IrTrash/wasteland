@@ -295,28 +295,28 @@ class world
 						if(pdata != NULL)
 						{
 							_type movetype = (_type)pdata->getvfirst(_movetype);
-							int x = pdata->getvfirst(_x), y = pdata->getvfirst(_y);
+							double x = pdata->getvfirst(_rx), y = pdata->getvfirst(_ry);
 							switch(movetype)
 							{
 								case _destination :
 								{								
 									int dx = pdata->getvfirst(_destx),dy = pdata->getvfirst(_desty);
-
-									if(dx != x)
+									int ix = (int)x, iy = (int)y;
+									
+									double distance = sqrt( (dx-ix)*(dx-ix) + (dy-iy)*(dy-iy) ) , direc;
+									if(distance == 0) //??
 									{
-										pdata->setfirst(_direction,atan((dy-y)/(dx-x) ));
+										break;
 									}
-									else
+									else 
 									{
-										if(dy > y)
+										direc = acos( double(dx-ix) / distance );
+										if(iy > dy)
 										{
-											pdata->setfirst(_direction,0);
-										}
-										else if(dy < y)
-										{
-											pdata->setfirst(_direction,pi/2);
+											direc = -direc;
 										}
 									}
+									pdata->setfirst(_direction,direc);
 									pdata->setfirst(_movetype,_direction);
 								} //이어지기 
 								case _direction :
@@ -328,8 +328,11 @@ class world
 									}		
 									double direction = pdata->getvfirst(_direction);
 									
-									pdata->setfirst(_x , x + (speed*cos(direction)) );
-									pdata->setfirst(_y , y + (speed*sin(direction)) );
+									double rx = x + (speed*cos(direction)), ry = y + (speed*sin(direction));
+									pdata->setfirst(_rx , rx );
+									pdata->setfirst(_ry , ry );
+									pdata->setfirst(_x , int(rx) );
+									pdata->setfirst(_y , int(ry) );
 								}
 								break;
 							}
@@ -412,6 +415,8 @@ class world
 					dbuf.type = _pdata;
 					dbuf.add(_x,0);
 					dbuf.add(_y,0);
+					dbuf.add(_rx,0);
+					dbuf.add(_ry,0);
 					dbuf.add(_destx,0);
 					dbuf.add(_desty,0);
 					dbuf.add(_size,1);

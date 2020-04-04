@@ -9,7 +9,7 @@ namespace mtypelist
 {
 	enum v
 	{
-		_x=1,_y,__type,_movetype,_speed,_size,_direction,_destination,_destx,_desty,
+		_x=1,_y,__type,_movetype,_speed,_size,_direction,_destination,_destx,_desty,_rx,_ry,
 		
 		
 		_enter,_plus,_minus,_multiple,_divide,_add,_delete,
@@ -23,7 +23,7 @@ namespace mtypelist
 	
 	char name[typelast-1][tnamelen] =
 	{
-		"x","y","type","movetype","speed","size","direction","destination","destx","desty",
+		"x","y","type","movetype","speed","size","direction","destination","destx","desty","rx","ry",
 		
 		
 		"enter","plus","minus","multiple","divide","add","delete",

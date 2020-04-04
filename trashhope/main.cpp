@@ -50,18 +50,18 @@ namespace test1
 		w.iniobj(_bullet,&o);
 		
 		ivnum = 0;
-		inputvalue[ivnum].type = _x;
+		inputvalue[ivnum].type = _rx;
 		inputvalue[ivnum++].v = 300;
-		inputvalue[ivnum].type = _y;
+		inputvalue[ivnum].type = _ry;
 		inputvalue[ivnum++].v = 200;
 		inputvalue[ivnum].type = _destx;
-		inputvalue[ivnum++].v = 800;
+		inputvalue[ivnum++].v = 40;
 		inputvalue[ivnum].type = _desty;
-		inputvalue[ivnum++].v = 700;
+		inputvalue[ivnum++].v = 100;
 		inputvalue[ivnum].type = _movetype;
 		inputvalue[ivnum++].v = _destination;
 		inputvalue[ivnum].type = _speed;
-		inputvalue[ivnum++].v = 10;
+		inputvalue[ivnum++].v = 0.7;
 		inputvalue[ivnum].type = _size;
 		inputvalue[ivnum++].v = 11;
 		
@@ -125,6 +125,9 @@ HPEN hPen,OldPen;
 
 
 
+clock_t fstart;
+int fps;
+int waittime = 0,tooktime = 0;
 
 
 /* This is where all the input to the window goes to */
@@ -136,7 +139,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				srand(unsigned(time(NULL)));
 				GetClientRect(hwnd,&crt);
 
-				SetTimer(hwnd,0,40,NULL);
+				SetTimer(hwnd,0,1,NULL);
+				fps = 60;
+				
 				
 				test1::start();
 			}
@@ -146,9 +151,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			switch(wParam)
 			{
 				case 0 :
+				{
+					fstart = clock();
+					
+					//할거  
 					InvalidateRect(hwnd,&crt,false); 
 					testproc();
+					//
 					
+					
+					tooktime = clock() - fstart;
+					waittime = (int)(1000/fps) - tooktime;
+					if(waittime > 0)
+					{
+						Sleep(waittime);
+					}
+				}
 				break;
 				
 			}			
@@ -162,8 +180,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			hBitmap = CreateCompatibleBitmap(hdc, crt.right, crt.bottom);
 			OldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap); //HBITMAP(SelectObject(hMemDC, hBitmap)); 이것도 됨.
 			
-			BGBrush = CreateSolidBrush(RGB(40,255,40));
-			
+			BGBrush = CreateSolidBrush(RGB(40,255,40));		
 			FillRect(hMemDC,&crt,BGBrush);
 			DeleteObject(BGBrush);
 			

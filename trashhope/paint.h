@@ -23,7 +23,6 @@ class figure //µµÇü
 			bool r = true;
 			
 			using namespace mtypelist;
-			
 			HBRUSH oldbr;
 			oldbr = (HBRUSH)SelectObject(dc,CreateSolidBrush(this->brcolor));
 			switch(this->type)
