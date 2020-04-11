@@ -11,9 +11,11 @@ namespace mtypelist
 	{
 		_x=1,_y,__type,_movetype,_speed,_size,_direction,_destination,_destx,_desty,_rx,_ry,
 		
+		_id,_life,_boundtype,_bounddelay,_boundlimit,
 		
 		_enter,_plus,_minus,_multiple,_divide,_add,_delete,
 		
+		_power,_delay,_interval,_number,_time,
 		
 		_circle,_square,
 		
@@ -25,8 +27,11 @@ namespace mtypelist
 	{
 		"x","y","type","movetype","speed","size","direction","destination","destx","desty","rx","ry",
 		
+		"id","life","boundtype","bounddelay","boundlimit",
 		
 		"enter","plus","minus","multiple","divide","add","delete",
+		
+		"power","delay","interval","number","time",
 		
 		
 		"circle","square",
@@ -40,13 +45,19 @@ namespace dtypelist
 	{
 		_pdata=1,_status,
 		
+		_beffect,_ueffect,_ubuff,
+		_dmg,_heal,_stun,
+		
 		
 		typelast
 	};
 	
 	char name[typelast-1][tnamelen] = 
 	{
-		"positiondata","status"
+		"positiondata","status",
+		
+		"bulleteffect","uniteffect","unitbuff",
+		"damage","heal","stun",
 	};
 	
 };

@@ -197,5 +197,53 @@ class object
 			
 			return this->setdata(opertype,dest->type, dest->vlist,dest->vnum);
 		}
+	
+		
+		unsigned countdata(_type desttype)
+		{
+			if(desttype == 0)
+			{
+				return  0;
+			}
+			
+			unsigned r= 0;
+			for(unsigned n=0;n<this->dnum;n++)
+			{
+				if(this->dlist[n].type == desttype)
+				{
+					r++;
+				}
+			}
+			return r;
+		}
+		
+		
+		unsigned getdata(_type desttype, data *dest, unsigned destsize)
+		{
+			if(desttype == 0 || dest == NULL || destsize == 0)
+			{
+				return 0;
+			}
+			
+			unsigned r = 0;
+			for(unsigned n=0;n<this->dnum;n++)
+			{
+				if(this->dlist[n].type == desttype )
+				{
+					if(r >= destsize)
+					{
+						return ++r;
+					}
+					else
+					{
+						dest[r++].copy(&this->dlist[n]);
+					}
+				}
+			}
+			
+			return r;
+		}
+		
+		
 		
 };

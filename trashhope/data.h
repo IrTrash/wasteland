@@ -324,7 +324,35 @@ class data
 			
 			return true;
 		}
-
+		
+		void reset()
+		{
+			this->type = 0;
+			for(unsigned n=0;n<this->vnum;n++)
+			{
+				this->vlist[n].type = 0;
+				this->vlist[n].v = 0;
+			}
+			this->vnum = 0;
+		}
+		
+		bool checkv(_type desttype, vtype destv)
+		{
+			if(desttype == 0)
+			{
+				return false;
+			}
+			
+			for(unsigned n=0;n<this->vnum;n++)
+			{
+				if(this->vlist[n].type == desttype && this->vlist[n].v == destv)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
 	private :
 		
 		void sort()

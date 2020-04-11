@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-
+#include "customfunc.h"
 #include "type.h"
 #include "data.h"
 #include "paint.h"
@@ -55,9 +55,9 @@ namespace test1
 		inputvalue[ivnum].type = _ry;
 		inputvalue[ivnum++].v = 200;
 		inputvalue[ivnum].type = _destx;
-		inputvalue[ivnum++].v = 40;
+		inputvalue[ivnum++].v = 540;
 		inputvalue[ivnum].type = _desty;
-		inputvalue[ivnum++].v = 100;
+		inputvalue[ivnum++].v = 40;
 		inputvalue[ivnum].type = _movetype;
 		inputvalue[ivnum++].v = _destination;
 		inputvalue[ivnum].type = _speed;
