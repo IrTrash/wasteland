@@ -13,6 +13,8 @@ namespace mtypelist
 		
 		_id,_life,_boundtype,_bounddelay,_boundlimit,
 		
+		_hp,_def,
+		
 		_enter,_plus,_minus,_multiple,_divide,_add,_delete,
 		
 		_power,_delay,_interval,_number,_time,
@@ -28,6 +30,8 @@ namespace mtypelist
 		"x","y","type","movetype","speed","size","direction","destination","destx","desty","rx","ry",
 		
 		"id","life","boundtype","bounddelay","boundlimit",
+		
+		"hp","def",
 		
 		"enter","plus","minus","multiple","divide","add","delete",
 		
@@ -47,6 +51,7 @@ namespace dtypelist
 		
 		_beffect,_ueffect,_ubuff,
 		_dmg,_heal,_stun,
+		_cdmg,_cheal,
 		
 		
 		typelast

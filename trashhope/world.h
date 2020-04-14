@@ -524,6 +524,7 @@ class world
 							bbtype = bpdata->getvfirst(_boundtype);
 							ubdelay = updata->getvfirst(_bounddelay); 
 							bbdelay  = bpdata->getvfirst(_bounddelay);
+							bblimit = bpdata->getvfirst(_boundlimit);
 							
 							int ux,uy,bx,by,usize,bsize;
 							ux = updata->getvfirst(_x);
@@ -545,6 +546,20 @@ class world
 									
 									delete[] eftlist;
 								}
+								
+								// 처리 후 
+								if(bblimit > 0)
+								{
+									bpdata->setfirst(_boundlimit,bblimit+1);
+									this->boundcool[n][m] = bbdelay;
+								}
+								else
+								{
+									//제거 
+									bbuf->reset();	
+									this->boundcool[n][m] = 0;								
+								}
+								 
 							}
 						}
 						break;
@@ -553,7 +568,7 @@ class world
 						break;
 					}
 				}
-				
+				this->osort();
 				
 			}
 		}
@@ -563,32 +578,67 @@ class world
 			this->pp.paint(dc);
 		}
 		
-		unsigned affectunit(object *destunit, data *dest, unsigned destsize)
+		bool affectunit(object *destunit, data *dest)
+		{
+			if(destunit == NULL || dest == NULL )
+			{
+				return false;
+			}
+			
+			using namespace mtypelist;
+			using namespace dtypelist;
+			
+			
+			
+			
+			
+			switch((_type)dest->getvfirst(__type))
+			{
+				case _dmg :
+				{
+					data *ustat = destunit->getdfirst(_status);
+					if(ustat != NULL)
+					{
+						int power = (int)dest->getvfirst(_power);
+						if(power > 0)
+						{
+							ustat->operfirst(_minus,_life,dest->getvfirst(_power));
+						}
+					}
+				}
+				break;
+				
+				case _heal :
+				{
+				}
+				break;
+				
+				
+				default : return false;
+			}
+			
+			return true;
+		}
+		
+		
+		unsigned affectunit(object *destunit, data *dest,unsigned destsize)
 		{
 			if(destunit == NULL || dest == NULL || destsize == 0)
 			{
 				return 0;
 			}
 			
-			using namespace mtypelist;
-			using namespace dtypelist;
-			
-			_type etype = 0;
-			for(unsigned n=0;n < destsize; n++)
+			unsigned r = 0;
+			for(unsigned n=0;n<destsize;n++)
 			{
-				etype = dest[n].getvfirst(__type);
-				switch(etype)
+				if(this->affectunit(destunit,&dest[n]))
 				{
-					case _dmg :
-					{
-					}
-					break;
-					
-					case _heal :
-					{
-					}
-					break;
+					r++;
 				}
 			}
+			return r;
+			
 		}
+		
+ 
 };

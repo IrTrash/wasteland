@@ -134,6 +134,18 @@ class object
 		unsigned dnum,dmax;
 		data *dlist;
 		
+		void reset()
+		{
+			this->type = 0 ;
+			
+			for(unsigned n = 0;n<this->dnum;n++)
+			{
+				this->dlist[n].reset();
+			}
+			
+			this->dnum = 0;
+		}
+		
 	private :	
 		
 		

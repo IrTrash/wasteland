@@ -325,17 +325,7 @@ class data
 			return true;
 		}
 		
-		void reset()
-		{
-			this->type = 0;
-			for(unsigned n=0;n<this->vnum;n++)
-			{
-				this->vlist[n].type = 0;
-				this->vlist[n].v = 0;
-			}
-			this->vnum = 0;
-		}
-		
+
 		bool checkv(_type desttype, vtype destv)
 		{
 			if(desttype == 0)
@@ -352,6 +342,17 @@ class data
 			}
 			return false;
 		}
+		
+		void reset()
+		{
+			this->type = 0;
+			for(unsigned n=0;n<this->vnum;n++)
+			{
+				this->vlist[n].type = 0;
+				this->vlist[n].v = 0;
+			}
+		}
+		
 		
 	private :
 		
